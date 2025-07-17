@@ -54,8 +54,9 @@ openany
 % \renewcommand\thesubfigure{(\Alph{subfigure})} % change the image numbering and reference link to (A),(B),(C), ...... format
 
 \usepackage{mathpazo} % Use the Palatino font by default
+\usepackage{bm} % Bold math symbols
 %\usepackage[backend=bibtex,style=alphabetic,natbib=true]{biblatex} % Use the bibtex backend with the authoryear citation style (which resembles APA)
-\usepackage[natbib=true,maxbibnames=99,firstinits=true]{biblatex}
+\usepackage[backend=bibtex,natbib=true,maxbibnames=99,firstinits=false]{biblatex}
 
 \addbibresource{thesis.bib} % The filename of the bibliography
 
@@ -66,6 +67,8 @@ openany
 \usepackage{rotating} % Required to add rotated big tables
 
 \usepackage[normalem]{ulem} % Required to add dashed underlines
+
+\usepackage[cal=cm]{mathalfa}  % "cm" = Computer Modern (比较规整)
 
 \setlength\parindent{2em}
 %----------------------------------------------------------------------------------------
@@ -250,6 +253,10 @@ openany
 
 \include{Chapters/Chapter1}
 \include{Chapters/Chapter2}
+\include{Chapters/Chapter3}
+\include{Chapters/Chapter4}
+\include{Chapters/Chapter5}
+\include{Chapters/Chapter6}
 
 %----------------------------------------------------------------------------------------
 %	THESIS CONTENT - APPENDICES
@@ -269,6 +276,7 @@ openany
 %	BIBLIOGRAPHY
 %----------------------------------------------------------------------------------------
 
+\nocite{*}
 \printbibliography[heading=bibintoc]
 
 %----------------------------------------------------------------------------------------

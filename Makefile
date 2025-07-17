@@ -9,18 +9,25 @@ BIB_FILES = $(wildcard *.bib)
 
 all: $(PDF)
 
-# 使用latexmk编译
+# 使用 pdflatex + bibtex 编译
 $(PDF): $(TEX_FILES) $(BIB_FILES)
-	latexmk -pdf $(MAIN)
+	pdflatex $(MAIN)
+	bibtex $(MAIN)
+	pdflatex $(MAIN)
+	pdflatex $(MAIN)
 
 # 强制重新编译
 force:
-	latexmk -pdf -f $(MAIN)
+	pdflatex $(MAIN)
+	bibtex $(MAIN)
+	pdflatex $(MAIN)
+	pdflatex $(MAIN)
 
 # 清理中间文件
 clean:
-	latexmk -c
+	rm -f *.aux *.log *.bbl *.blg *.toc *.lof *.lot *.out *.fdb_latexmk *.fls *.synctex.gz
+	rm -f *.nav *.snm *.vrb *.bcf *.run.xml *.auxlock
 
 # 完全清理（包括PDF）
-distclean:
-	latexmk -C
+distclean: clean
+	rm -f $(PDF)

@@ -29,3 +29,5 @@ main.pdf
 *.synctex
 *.bbl-SAVE-ERROR
 *.bcf-SAVE-ERROR
+
+**/.DS_Store
