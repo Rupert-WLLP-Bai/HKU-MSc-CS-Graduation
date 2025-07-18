@@ -2,8 +2,6 @@
 
 \label{chap:introduction}
 
-Click-through rate (CTR) prediction lies at the heart of the online advertising ecosystem and recommendation systems, aiming to estimate a user's likelihood of clicking on a specific item or advertisement. Accurate CTR predictions enable service providers to generate more relevant and diverse recommendation lists, thereby improving user experience, engagement, and platform revenue~\cite{chen2016deep, zhou2018deep}. Consequently, CTR prediction has garnered significant attention from both industry professionals and academic researchers.
-
 \begin{figure}[t]
     \centering
     \includegraphics[width=0.9\linewidth]{Figures/Chapter1/figure1.png}
@@ -13,11 +11,17 @@ Click-through rate (CTR) prediction lies at the heart of the online advertising 
 
 \section{Background and Motivation}
 
+In the modern digital landscape, individuals are inundated with a virtually infinite amount of information. Whether shopping on e-commerce platforms like Amazon, streaming content on Netflix, or browsing news feeds on social media, users rely on recommendation systems to navigate this vast sea of choices. These systems act as personalized guides, curating content and products to match individual tastes and needs. This personalization is not merely a convenience; it is a critical driver of user experience, engagement, and, ultimately, platform revenue. A successful recommendation can delight a user and foster loyalty, while a poor one can lead to frustration and churn.
+
+At the heart of this personalization engine lies a fundamental question: "Of all the items we could show a user, which one are they most likely to interact with?" In the digital world, the most common and measurable form of interaction is a click. Therefore, the ability to accurately estimate the probability of a user clicking on a specific item becomes a cornerstone technology. This task is formally known as Click-Through Rate (CTR) prediction. Due to its central role in optimizing user engagement and economic outcomes, CTR prediction has garnered immense attention from both industry practitioners and academic researchers~\cite{chen2016deep, zhou2018deep}.
+
 Conventional CTR prediction methods typically comprise four main layers: the input layer, embedding layer, interaction layer, and prediction layer~\cite{guo2017deepfm, wang2021dcn}. The input layer incorporates a variety of features, including user attributes (e.g., gender, age, occupation, behavior sequences), item characteristics (e.g., category, brand), and contextual information (e.g., interaction location, time). These features are initially processed through the embedding layer to obtain feature embeddings. Subsequently, feature interaction layers, such as Factorization Machines~\cite{rendle2010factorization}, EulerNet~\cite{tian2023eulernet}, or KAN~\cite{shi2024beyond}, conduct interactions on the feature embeddings. The resulting interacted features are then fed into the prediction layer to estimate the final click probability.
 
 Traditional CTR models primarily rely on structured categorical and numerical features~\cite{guo2021dual, liu2020autofis}. However, with the rapid advancement of Pretrained Language Models (PLMs)~\cite{devlin2019bert}, researchers have begun incorporating textual information to enrich semantic understanding and improve prediction accuracy~\cite{wang2023bert4ctr, chen2023tbin}. For instance, CTRL~\cite{li2023ctrl} collects textual descriptions of features and encodes them using PLMs to derive semantic embeddings. It employs a contrastive learning strategy to align collaborative signals with these semantic embeddings. 
 
 Despite the effectiveness of PLMs in extracting semantic features, existing methods typically encode all textual information into a single dense embedding~\cite{liu2020category, yang2019learning}. As illustrated in Figure~\ref{fig:disentangle}, since textual descriptions inherently contain multiple aspects—such as brand, price, quality, and user sentiment—compressing them into a single representation leads to an entangled embedding. This entanglement hinders fine-grained feature interactions, limiting the model's ability to distinguish between different aspects of user preferences~\cite{ma2019learning, wang2020disentangled}.
+
+For instance, consider a user browsing for a laptop. The product's title, 'BrandX Pro Laptop, 15-inch, High-Performance CPU, Lightweight for Business, On Sale', contains multiple semantic facets: brand ('BrandX'), specifications ('15-inch', 'High-Performance CPU'), usage scenario ('Business'), and promotion ('On Sale'). A user might click because they trust the brand, while another might be attracted by the sale price. An entangled embedding merges these distinct signals, making it difficult for the model to learn whether the user's core interest lies in 'BrandX', 'high performance', or 'discounted items'. This ambiguity can lead to suboptimal recommendations, such as pushing full-priced BrandX items to a price-sensitive user.
 
 \section{Problem Statement and Challenges}
 
@@ -35,6 +39,8 @@ Addressing these issues presents two major challenges:
     \item \textbf{Knowledge Integration Challenge:} How can we effectively integrate multi-faceted knowledge into the CTR prediction task to extract useful information? Not all extracted textual information is relevant to user decision-making, so aligning it with CTR prediction is crucial for performance improvement~\cite{ni2019justifying, wong2021improving}.
 \end{enumerate}
 
+Successfully addressing these challenges would not only lead to significant improvements in CTR prediction accuracy but also unlock new possibilities for recommendation systems. A model capable of understanding disentangled user preferences could provide more diverse and personalized recommendations. For example, it could differentiate between a user's long-term interest in a brand and their short-term need for a specific product feature. Furthermore, the disentangled representations offer enhanced model interpretability, allowing researchers and practitioners to understand why a user clicked, thus enabling more transparent and controllable recommendation strategies.
+
 \section{Proposed Approach}
 
 To address these challenges, we propose \textbf{Multi-faceted Semantic Disentanglement for CTR prediction (MSD-CTR)}. Our approach draws inspiration from recent advances in disentangled representation learning~\cite{higgins2017beta, burgess2018understanding} and neural topic modeling~\cite{dieng2020topic, srivastava2017autoencoding} to create a unified framework for text-enhanced CTR prediction.
@@ -46,6 +52,8 @@ MSD-CTR consists of two key components:
     
     \item \textbf{Topic Guided Disentangled Representation Learning (TopicDRL):} This component incorporates the multi-faceted knowledge into CTR prediction, introducing an individual-level alignment loss and an intra-view contrastive loss to guide semantic embedding learning. The design is motivated by recent work in contrastive learning for recommendation~\cite{lin2022feature} and causal disentanglement~\cite{yang2021causalvae, zheng2021disentangling}.
 \end{itemize}
+
+Unlike previous works\cite{li2023ctrl,kingma2013auto,higgins2017beta}, that either focus on disentangling collaborative signals or apply generic text encoders, MSD-CTR creates a synergistic bridge between neural topic modeling and CTR prediction. The core innovation lies in its ability to first explicitly model textual information as a distribution over disentangled semantic topics (via DSTopic) and then use this structured knowledge to guide the learning of user and item representations within the CTR framework (via TopicDRL). This two-stage process ensures that the disentangled knowledge is both meaningful and directly relevant to the prediction task.
 
 \section{Contributions and Evaluation}
 

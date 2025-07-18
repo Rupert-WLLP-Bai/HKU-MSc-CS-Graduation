@@ -70,6 +70,23 @@ openany
 
 \usepackage[cal=cm]{mathalfa}  % "cm" = Computer Modern (比较规整)
 
+\usepackage{listings}
+\usepackage{xcolor}
+
+\lstset{
+  language=Python,
+  basicstyle=\ttfamily\small,      % 小号等宽字体
+  breaklines=true,                 % 自动换行
+  keywordstyle=\color{blue},       % 关键字高亮
+  commentstyle=\color{gray},       % 注释颜色
+  stringstyle=\color{orange},      % 字符串颜色
+  showstringspaces=false,          % 不显示字符串中的空格标记
+  numbers=left,                    % 行号显示在左侧
+  numberstyle=\tiny\color{gray},   % 行号样式
+  frame=single,                    % 给代码加个框
+  captionpos=b                     % 标题放在底部（如有）
+}
+
 \setlength\parindent{2em}
 %----------------------------------------------------------------------------------------
 %	MARGIN SETTINGS
@@ -268,8 +285,8 @@ openany
 % Uncomment the lines as you write the Appendices
 
 \include{Appendices/AppendixA}
-\include{Appendices/AppendixB}
-\include{Appendices/AppendixC}
+% \include{Appendices/AppendixB}
+% \include{Appendices/AppendixC}
 
 
 %----------------------------------------------------------------------------------------
