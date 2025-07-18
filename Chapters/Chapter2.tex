@@ -2,7 +2,7 @@
 
 \section{Problem Definition}
 
-Click-through rate (CTR) prediction is a binary classification task. The conventional CTR prediction dataset $\mathcal{D}$ consists of $N$ samples, each represented as a pair $(\mathbf{x}_i, y_i)$, where the label $y_i \in \{0, 1\}$ indicates the user’s click behavior (1 for click, 0 for no click). The input instance is denoted by $\mathbf{x}_i = \{x_{i,1}, x_{i,2}, \cdots, x_{i,m}\}$, where $m$ represents the number of feature fields, and each feature $x_{i,m}$ is a high-dimensional one-hot vector.
+Click-through rate (CTR) prediction is a binary classification task. The conventional CTR prediction dataset $\mathcal{D}$ consists of $N$ samples, each represented as a pair $(\mathbf{x}_i, y_i)$, where the label $y_i \in \{0, 1\}$ indicates the user's click behavior (1 for click, 0 for no click). The input instance is denoted by $\mathbf{x}_i = \{x_{i,1}, x_{i,2}, \cdots, x_{i,m}\}$, where $m$ represents the number of feature fields, and each feature $x_{i,m}$ is a high-dimensional one-hot vector.
 
 In traditional CTR scenarios, a $D$-dimensional embedding layer $\mathcal{E} = \{E_1, E_2, \cdots, E_m\}$ maps the high-dimensional sparse vector $\mathbf{x}_i$ into a low-dimensional dense embedding $\mathbf{e}_i = \{e_{i,1}, e_{i,2}, \cdots, e_{i,m}\}$, where $e_{i,m} \in \mathbb{R}^{D}$, which is more suitable for learning in deep models. The CTR prediction model $f_{\text{CTR}}$ then estimates the click probability $y_i$ based on these embeddings, formulated as:
 \[
@@ -21,11 +21,90 @@ where $f_{\text{text}}$ is a fully connected network that aligns the embedding s
 
 Due to the rich information in $t_i$, the encoded semantic embedding $\mathbf{t}_i$ often captures multiple latent aspects, leading to an entangled representation. In this study, we focus on disentangling the entangled semantic embedding $\mathbf{t}_i$ into distinct, meaningful embeddings to enhance interpretability and effectiveness.
 
+\section{Classical CTR Prediction Models}
+
+To provide comprehensive background for our work, we review several foundational CTR prediction models that have significantly influenced the field.
+
+\subsection{Wide \& Deep Learning}
+
+Wide \& Deep Learning combines the memorization capability of linear models with the generalization power of deep neural networks. The wide component is a linear model that directly learns feature interactions through cross-product feature transformations:
+\[
+y_{\text{wide}} = \mathbf{w}^T_{\text{wide}}[\mathbf{x}, \phi(\mathbf{x})] + b_{\text{wide}},
+\]
+where $\phi(\mathbf{x})$ represents cross-product transformations. The deep component is a feed-forward neural network that learns high-level feature representations through multiple hidden layers:
+\[
+\mathbf{a}^{(l+1)} = f(\mathbf{W}^{(l)} \mathbf{a}^{(l)} + \mathbf{b}^{(l)}),
+\]
+where $\mathbf{a}^{(l)}$ denotes the activation at layer $l$. The final prediction combines both components: $y = \sigma(y_{\text{wide}} + y_{\text{deep}})$.
+
+\subsection{DeepFM}
+
+DeepFM~\cite{guo2017deepfm} addresses the limitation of Wide \& Deep by automatically learning feature interactions without manual feature engineering. It consists of two components: a Factorization Machine (FM) component for low-order feature interactions and a deep neural network for high-order interactions. The FM component models pairwise interactions:
+\[
+y_{\text{FM}} = w_0 + \sum_{i=1}^{n} w_i x_i + \sum_{i=1}^{n} \sum_{j=i+1}^{n} \langle \mathbf{v}_i, \mathbf{v}_j \rangle x_i x_j,
+\]
+where $\mathbf{v}_i \in \mathbb{R}^k$ is the latent vector for feature $i$, and $\langle \cdot, \cdot \rangle$ denotes the inner product.
+
+\subsection{Deep Interest Network (DIN)}
+
+DIN~\cite{zhou2018deep} introduces the attention mechanism to CTR prediction, particularly focusing on modeling user interests dynamically. Given a user's historical behavior sequence $\{e_1, e_2, \ldots, e_T\}$ and a candidate item $e_c$, DIN computes attention weights:
+\[
+a_i = \frac{\exp(f(e_i, e_c))}{\sum_{j=1}^{T} \exp(f(e_j, e_c))},
+\]
+where $f(\cdot, \cdot)$ is a multi-layer perceptron. The user representation is then computed as:
+\[
+\mathbf{u} = \sum_{i=1}^{T} a_i \cdot e_i.
+\]
+
+\subsection{Deep Interest Evolution Network (DIEN)}
+
+DIEN~\cite{zhou2019deep} extends DIN by modeling the evolution of user interests over time. It introduces an interest evolution layer with GRU-based architecture:
+\[
+\mathbf{h}_t = \text{GRU}(\mathbf{h}_{t-1}, \mathbf{i}_t),
+\]
+where $\mathbf{i}_t$ represents the interest at time $t$. An attention-based mechanism further focuses on relevant interest evolution patterns.
+
+\section{Challenges in PLM-Enhanced CTR Prediction}
+
+While PLMs offer powerful semantic understanding capabilities, their integration with CTR prediction faces several significant challenges that motivate our research.
+
+\subsection{Semantic Drift Challenge}
+
+\textbf{Definition:} Semantic drift occurs when the semantic representations learned by PLMs do not align well with user behavioral patterns in the CTR prediction context. PLMs are typically pre-trained on general text corpora, leading to representations that may not capture domain-specific user preferences~\cite{wang2023bert4ctr}.
+
+\textbf{Manifestation:} Consider an e-commerce scenario where a product description mentions "premium quality leather." A general PLM might encode this as a luxury indicator, but users in a price-sensitive segment might associate it with high cost and avoid clicking. This misalignment between semantic understanding and actual user behavior constitutes semantic drift.
+
+\textbf{Impact:} Semantic drift can lead to suboptimal feature representations that fail to capture the nuanced relationship between textual content and user click behavior, ultimately degrading model performance.
+
+\subsection{User Intent Ambiguity}
+
+\textbf{Multi-faceted Intent:} User intentions are often multi-dimensional and context-dependent. A single piece of textual information may relate to multiple user intents simultaneously. For instance, a smartphone description containing "camera quality" might appeal to photography enthusiasts, social media users, and professional content creators for different reasons~\cite{ma2019learning}.
+
+\textbf{Temporal Variability:} User intents evolve over time, influenced by seasonal trends, personal circumstances, and external events. Static semantic representations from PLMs cannot capture this temporal dynamics, leading to outdated or irrelevant feature encodings~\cite{zhou2019deep}.
+
+\textbf{Contextual Dependency:} The same textual content may have different implications depending on the user context (time of day, location, device, etc.). PLMs typically provide context-agnostic representations that fail to account for these situational factors.
+
+\subsection{Feature Interaction Complexity}
+
+\textbf{Cross-modal Interactions:} In text-enhanced CTR prediction, semantic features from PLMs must interact effectively with traditional categorical and numerical features. However, the high-dimensional dense representations from PLMs often dominate the feature space, making it challenging for traditional features to contribute meaningfully~\cite{wang2021dcn}.
+
+\textbf{Semantic Entanglement:} As highlighted in our problem formulation, PLM-generated embeddings often entangle multiple semantic aspects. This entanglement makes it difficult to model fine-grained feature interactions, as the model cannot distinguish between different aspects of the semantic information~\cite{wang2024disentangled}.
+
+\textbf{Scale Mismatch:} PLM embeddings (typically 768-1024 dimensions) and traditional CTR features (typically 8-64 dimensions) operate at different scales, leading to optimization challenges and potential feature dominance issues~\cite{guo2024embedding}.
+
+\subsection{Computational Efficiency Concerns}
+
+\textbf{Inference Latency:} Real-time CTR prediction systems require extremely low latency (typically <10ms). The computational overhead of PLM encoding can significantly impact system performance, especially when dealing with long textual descriptions~\cite{li2023ctrl}.
+
+\textbf{Memory Footprint:} PLMs require substantial memory resources, which may conflict with the memory constraints of production CTR systems that need to handle millions of requests per second.
+
+\textbf{Model Complexity:} The integration of PLMs dramatically increases model complexity, making it challenging to deploy and maintain in production environments.
+
 \section{Topic Model}
 
 To perform the disentangling task, we employ topic modeling to capture distinct semantic aspects from textual information. A topic model is a statistical approach for discovering hidden semantic structures in a collection of documents. In this study, we treat the textual information of all items as a document corpus, denoted as $\mathcal{T} = \{t_j \mid j \in [1, 2, \cdots, J]\}$, where $J$ is the total number of items. Each document $t_j$ is represented as a Bag-of-Words (BoW) vector $\mathbf{b}_j \in \mathbb{R}^{V}$, where $V$ is the vocabulary size.
 
-The topic model assumes that each document is generated from a mixture of topics (document’s topic distribution), where each topic is characterized by a distribution over words (topic-word distribution). ETM factorizes the topic-word distribution into a topic embedding matrix $\alpha \in \mathbb{R}^{K \times D_{\text{TM}}}$ and a word embedding matrix $\rho \in \mathbb{R}^{V \times D_{\text{TM}}}$, where $K$ is the number of topics and $D_{\text{TM}}$ is the dimensionality of the embeddings. The topic-word distribution matrix $\beta \in \mathbb{R}^{K \times V}$ is computed as:
+The topic model assumes that each document is generated from a mixture of topics (document's topic distribution), where each topic is characterized by a distribution over words (topic-word distribution). ETM factorizes the topic-word distribution into a topic embedding matrix $\alpha \in \mathbb{R}^{K \times D_{\text{TM}}}$ and a word embedding matrix $\rho \in \mathbb{R}^{V \times D_{\text{TM}}}$, where $K$ is the number of topics and $D_{\text{TM}}$ is the dimensionality of the embeddings. The topic-word distribution matrix $\beta \in \mathbb{R}^{K \times V}$ is computed as:
 \[
 \beta = \text{Softmax}(\alpha \rho^\top),
 \]
@@ -42,3 +121,19 @@ Let $b_{j,v}$ denote the $v$-th word in document $t_j$. The generative process o
 \end{enumerate}
 
 Here, $\mathcal{LN}(0, I)$ represents the logistic-normal distribution, which maps a standard Gaussian random variable into the probability simplex, and $\text{Cat}(\cdot)$ denotes the categorical distribution.
+
+\section{Disentangled Representation Learning}
+
+Disentangled representation learning aims to learn representations where different factors of variation in the data are encoded by different, ideally independent, latent variables~\cite{higgins2017beta}. In the context of CTR prediction, disentanglement allows us to separate different semantic aspects of textual information, such as product features, brand information, and user sentiment.
+
+\subsection{Variational Autoencoders for Disentanglement}
+
+$\beta$-VAE~\cite{higgins2017beta} introduces a hyperparameter $\beta$ to the standard VAE objective to encourage disentanglement:
+\[
+\mathcal{L}_{\beta\text{-VAE}} = \mathbb{E}_{q_\phi(\mathbf{z}|\mathbf{x})}[\log p_\theta(\mathbf{x}|\mathbf{z})] - \beta \cdot D_{KL}(q_\phi(\mathbf{z}|\mathbf{x}) || p(\mathbf{z})),
+\]
+where $\beta > 1$ increases the penalty on the KL divergence term, encouraging the learned representations to be more independent.
+
+\subsection{Challenges in Disentanglement}
+
+Recent work~\cite{locatello2019challenging} has shown that unsupervised disentanglement is fundamentally challenging without additional inductive biases or supervision. This motivates our approach of using topic modeling as a form of weak supervision to guide the disentanglement process in CTR prediction scenarios.

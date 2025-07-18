@@ -2,7 +2,7 @@
 
 \chapter{Method} % Main chapter title
 
-\label{ChapterX} % Change X to a consecutive number; for referencing this chapter elsewhere, use \ref{ChapterX}
+\label{Chapter3} % Change X to a consecutive number; for referencing this chapter elsewhere, use \ref{ChapterX}
 
 %----------------------------------------------------------------------------------------
 %	SECTION 1
@@ -10,7 +10,7 @@
 
 \section{Disentangled Semantic Topic Model}
 
-We construct the Disentangled Semantic Topic Model (DSTopic) to extract multi-faceted knowledge from informative textual data. Unlike traditional topic models that assume a single generative process, DSTopic introduces a disentangled multi-view generative framework to capture different aspects of documents. Since directly optimizing the likelihood function in DSTopic is intractable, we employ variational inference for efficient estimation. To implement this, DSTopic leverages a Disentangled Semantic VAE (DSVAE), combined with a vocabulary clustering module for enhanced semantic disentanglement. 
+We construct the Disentangled Semantic Topic Model (DSTopic) as a method to extract multi-faceted knowledge from complex and informative textual data. The DSTopic model is specifically designed to address the limitations of traditional topic models, which often rely on the assumption that there is only a single generative process underlying the data. In contrast, DSTopic proposes a disentangled multi-view generative framework, allowing the model to capture and represent different semantic aspects or facets of documents simultaneously. By doing so, DSTopic is able to provide a more comprehensive and structured understanding of the information contained within a collection of texts. However, optimizing the likelihood function in DSTopic directly is generally intractable due to the complexity of the model and the high-dimensional nature of textual data. To address this challenge, we adopt variational inference, which offers an efficient and scalable way to approximate the posterior distributions required for model estimation. In our implementation, DSTopic utilizes a Disentangled Semantic Variational Autoencoder (DSVAE) as its core component, which helps to separate the semantic representations of the data into distinct, meaningful components. In addition, we incorporate a vocabulary clustering module, which further enhances the semantic disentanglement by grouping similar words together. This combined approach enables DSTopic to achieve more accurate and interpretable topic representations, making it a powerful tool for analyzing and understanding large-scale text corpora.
 
 
 %-----------------------------------
@@ -76,7 +76,7 @@ where $ p(\theta_j^{(h)}) $ is a prior distribution defined as a standard Gaussi
 %-----------------------------------
 
 \subsection{Implementation of Disentangled Generative Process}
-In this section, we provide a detailed implementation of the Disentangled Semantic Topic Model (DSTopic), as illustrated in Figure~\ref{fig:framework}. The implementation consists of two core modules: Vocabulary Clustering and Disentangled Semantic VAE (DSVAE).
+In this section, we provide a detailed implementation of the Disentangled Semantic Topic Model (DSTopic), as illustrated in Figure~\ref{fig:architecture}. The implementation consists of two core modules: Vocabulary Clustering and Disentangled Semantic VAE (DSVAE).
 
 \noindent \textbf{(1) Vocabulary Clustering} aims to partition the original vocabulary set into multiple sub-vocabulary sets. We introduce $H$ view embeddings, denoted by $\gamma \in \mathbb{R}^{H \times D_{TM}}$, and compute matching scores between views and words using cosine similarity  $\mathbf{S}' = \rho / |\rho| \left(\gamma /|\gamma|\right)^{\mathrm{T}}$,
 %$\mathbf{S}' = \frac{\rho}{|\rho|} \left(\frac{\gamma}{|\gamma|}\right)^{\mathrm{T}}$,
@@ -114,7 +114,11 @@ Finally, the \textit{generation layer} follows the disentangled generative proce
 
 \section{Topic Guided Disentangled Representation Learning}
 
-To incorporate multi-faceted knowledge, we initially attempted to directly integrate the learned view-aware topic embeddings $\mathbf{z}^{(h)}$ into the feature set. However, this naive operation did not yield significant performance improvements and sometimes introduced negative effects. This phenomenon arises because the information relevant to document generation (from the topic model) and CTR prediction are not entirely aligned. Directly feeding the topic embeddings into the CTR prediction model may overlook beneficial information and introduce noise. Therefore, we propose the Topic Guided Disentangled Representation Learning (TopicDRL) framework as a refined alternative to directly using the topic embeddings.
+To incorporate multi-faceted knowledge from our disentangled topic model into the CTR prediction task, we initially attempted a straightforward approach by directly integrating the learned view-aware topic embeddings $\mathbf{z}^{(h)}$ into the existing feature set used for prediction. The intuition behind this direct integration was that the topic embeddings, which capture semantic aspects of documents, would naturally enhance the model's ability to predict click-through rates by providing additional contextual information. However, despite this reasonable assumption, this naive operation did not yield the significant performance improvements we expected. In fact, in some experimental settings, directly incorporating these topic embeddings actually introduced negative effects, leading to decreased prediction accuracy compared to baseline models without topic information.
+
+This counterintuitive phenomenon can be attributed to several underlying factors. First and most importantly, the information that is relevant and useful for document generation within the topic model framework is not entirely aligned with the information that is optimal for CTR prediction tasks. While topic models are designed to capture the semantic structure and thematic content of documents, CTR prediction requires understanding user behavior patterns, engagement signals, and factors that influence clicking decisions. These two objectives, though related, operate on different levels of abstraction and require different types of information. Second, directly feeding the topic embeddings $\mathbf{z}^{(h)}$ into the CTR prediction model may inadvertently overlook beneficial information that could be extracted from the topic representations through more sophisticated processing. At the same time, this direct approach may introduce unnecessary noise and irrelevant details that are useful for topic modeling but detrimental to CTR prediction performance.
+
+Given these challenges and the suboptimal results from the direct integration approach, we recognized the need for a more sophisticated method to bridge the gap between topic modeling and CTR prediction. Therefore, we propose the Topic Guided Disentangled Representation Learning (TopicDRL) framework as a refined and more principled alternative to directly using the raw topic embeddings $\mathbf{z}^{(h)}$. The TopicDRL framework is specifically designed to selectively extract and transform the relevant information from the topic embeddings while filtering out noise and irrelevant details. This approach allows us to leverage the multi-faceted knowledge captured by our disentangled topic model in a way that is more aligned with the requirements and objectives of CTR prediction tasks.
 
 TopicDRL encourages disentangled embeddings learning from the semantic embedding $\mathbf{t}_i$, denoted as:
 $[\tilde{\mathbf{t}}_i^{(1)}, \tilde{\mathbf{t}}_i^{(2)}, \cdots, \tilde{\mathbf{t}}_i^{(H)}] = f_{text}(\mathbf{t}_i)$

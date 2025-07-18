@@ -2,7 +2,7 @@
 
 \label{chap:introduction}
 
-Click-through rate (CTR) prediction lies at the heart of the online advertising ecosystem and recommendation systems, aiming to estimate a user’s likelihood of clicking on a specific item or advertisement. Accurate CTR predictions enable service providers to generate more relevant and diverse recommendation lists, thereby improving user experience, engagement, and platform revenue. Consequently, CTR prediction has garnered significant attention from both industry professionals and academic researchers.
+Click-through rate (CTR) prediction lies at the heart of the online advertising ecosystem and recommendation systems, aiming to estimate a user's likelihood of clicking on a specific item or advertisement. Accurate CTR predictions enable service providers to generate more relevant and diverse recommendation lists, thereby improving user experience, engagement, and platform revenue~\cite{chen2016deep, zhou2018deep}. Consequently, CTR prediction has garnered significant attention from both industry professionals and academic researchers.
 
 \begin{figure}[t]
     \centering
@@ -11,27 +11,57 @@ Click-through rate (CTR) prediction lies at the heart of the online advertising 
     \label{fig:disentangle}
 \end{figure}
 
-Conventional CTR prediction methods typically comprise four main layers: the input layer, embedding layer, interaction layer, and prediction layer. The input layer incorporates a variety of features, including user attributes (e.g., gender, age, occupation, behavior sequences), item characteristics (e.g., category, brand), and contextual information (e.g., interaction location, time). These features are initially processed through the embedding layer to obtain feature embeddings. Subsequently, feature interaction layers, such as Factorization Machines, EulerNet, or KAN, conduct interactions on the feature embeddings. The resulting interacted features are then fed into the prediction layer to estimate the final click probability.
+\section{Background and Motivation}
 
-Traditional CTR models primarily rely on structured categorical and numerical features. However, with the rapid advancement of Pretrained Language Models (PLMs), researchers have begun incorporating textual information to enrich semantic understanding and improve prediction accuracy. For instance, CTRL collects textual descriptions of features and encodes them using PLMs to derive semantic embeddings. It employs a contrastive learning strategy to align collaborative signals with these semantic embeddings. Despite the effectiveness of PLMs in extracting semantic features, existing methods typically encode all textual information into a single dense embedding. As illustrated in Figure~\ref{fig:disentangle}, since textual descriptions inherently contain multiple aspects—such as brand, price, quality, and user sentiment—compressing them into a single representation leads to an entangled embedding. This entanglement hinders fine-grained feature interactions, limiting the model’s ability to distinguish between different aspects of user preferences.
+Conventional CTR prediction methods typically comprise four main layers: the input layer, embedding layer, interaction layer, and prediction layer~\cite{guo2017deepfm, wang2021dcn}. The input layer incorporates a variety of features, including user attributes (e.g., gender, age, occupation, behavior sequences), item characteristics (e.g., category, brand), and contextual information (e.g., interaction location, time). These features are initially processed through the embedding layer to obtain feature embeddings. Subsequently, feature interaction layers, such as Factorization Machines~\cite{rendle2010factorization}, EulerNet~\cite{tian2023eulernet}, or KAN~\cite{shi2024beyond}, conduct interactions on the feature embeddings. The resulting interacted features are then fed into the prediction layer to estimate the final click probability.
 
-Addressing this issue presents two major challenges: 
-(1) How can we effectively disentangle and extract meaningful knowledge from textual information? Text descriptions contain rich but interwoven semantic aspects, making it challenging to separate distinct information (e.g., product features, user sentiment, and brand identity) and filter out noise. 
-(2) How can we effectively integrate multi-faceted knowledge into the CTR prediction task to extract useful information? Not all extracted textual information is relevant to user decision-making, so aligning it with CTR prediction is crucial for performance improvement.
+Traditional CTR models primarily rely on structured categorical and numerical features~\cite{guo2021dual, liu2020autofis}. However, with the rapid advancement of Pretrained Language Models (PLMs)~\cite{devlin2019bert}, researchers have begun incorporating textual information to enrich semantic understanding and improve prediction accuracy~\cite{wang2023bert4ctr, chen2023tbin}. For instance, CTRL~\cite{li2023ctrl} collects textual descriptions of features and encodes them using PLMs to derive semantic embeddings. It employs a contrastive learning strategy to align collaborative signals with these semantic embeddings. 
 
-To address these challenges, we propose \textbf{Multi-faceted Semantic Disentanglement for CTR prediction (MSD-CTR)}. MSD-CTR consists of two components: 
+Despite the effectiveness of PLMs in extracting semantic features, existing methods typically encode all textual information into a single dense embedding~\cite{liu2020category, yang2019learning}. As illustrated in Figure~\ref{fig:disentangle}, since textual descriptions inherently contain multiple aspects—such as brand, price, quality, and user sentiment—compressing them into a single representation leads to an entangled embedding. This entanglement hinders fine-grained feature interactions, limiting the model's ability to distinguish between different aspects of user preferences~\cite{ma2019learning, wang2020disentangled}.
+
+\section{Problem Statement and Challenges}
+
+The fundamental challenge in text-enhanced CTR prediction lies in the effective utilization of multi-faceted textual information. Current approaches suffer from several limitations:
+
+\textbf{Entangled Semantic Representations:} Existing methods~\cite{li2023ctrl, wang2023bert4ctr} typically encode entire textual descriptions into single dense vectors, which conflates distinct semantic aspects such as product features, brand information, user sentiment, and contextual descriptions. This entanglement prevents models from capturing nuanced user preferences and fine-grained feature interactions.
+
+\textbf{Insufficient Semantic Disentanglement:} While disentangled representation learning has shown promise in recommendation systems~\cite{ma2019learning, wang2021multimodal, cao2022disencdr}, most approaches focus on collaborative filtering scenarios rather than CTR prediction with rich textual content. The challenge of extracting and separating meaningful semantic aspects from unstructured text remains largely unaddressed.
+
+\textbf{Limited Integration of Multi-faceted Knowledge:} Even when different aspects of textual information can be identified, effectively incorporating them into CTR prediction models while maintaining their distinctiveness poses significant challenges~\cite{zhang2024towards}.
+
+Addressing these issues presents two major challenges: 
+\begin{enumerate}
+    \item \textbf{Semantic Disentanglement Challenge:} How can we effectively disentangle and extract meaningful knowledge from textual information? Text descriptions contain rich but interwoven semantic aspects, making it challenging to separate distinct information (e.g., product features, user sentiment, and brand identity) and filter out noise~\cite{wang2024disentangled, locatello2019challenging}.
+    \item \textbf{Knowledge Integration Challenge:} How can we effectively integrate multi-faceted knowledge into the CTR prediction task to extract useful information? Not all extracted textual information is relevant to user decision-making, so aligning it with CTR prediction is crucial for performance improvement~\cite{ni2019justifying, wong2021improving}.
+\end{enumerate}
+
+\section{Proposed Approach}
+
+To address these challenges, we propose \textbf{Multi-faceted Semantic Disentanglement for CTR prediction (MSD-CTR)}. Our approach draws inspiration from recent advances in disentangled representation learning~\cite{higgins2017beta, burgess2018understanding} and neural topic modeling~\cite{dieng2020topic, srivastava2017autoencoding} to create a unified framework for text-enhanced CTR prediction.
+
+MSD-CTR consists of two key components: 
+
 \begin{itemize}
-    \item \textbf{Disentangled Semantic Topic Model (DSTopic)} employs a disentangled generative process to capture different aspects of documents using a Disentangled Semantic VAE (DSVAE) and a vocabulary clustering module.
-    \item \textbf{Topic Guided Disentangled Representation Learning (TopicDRL)} incorporates the multi-faceted knowledge into CTR prediction, introducing an individual-level alignment loss and an intra-view contrastive loss to guide semantic embedding learning.
+    \item \textbf{Disentangled Semantic Topic Model (DSTopic):} This component employs a disentangled generative process to capture different aspects of documents using a Disentangled Semantic VAE (DSVAE) and a vocabulary clustering module. DSTopic builds upon recent advances in neural topic modeling~\cite{dieng2020topic, wu2023effective} while incorporating disentanglement principles from variational autoencoders~\cite{kingma2013auto, higgins2017beta}.
+    
+    \item \textbf{Topic Guided Disentangled Representation Learning (TopicDRL):} This component incorporates the multi-faceted knowledge into CTR prediction, introducing an individual-level alignment loss and an intra-view contrastive loss to guide semantic embedding learning. The design is motivated by recent work in contrastive learning for recommendation~\cite{lin2022feature} and causal disentanglement~\cite{yang2021causalvae, zheng2021disentangling}.
 \end{itemize}
 
-To evaluate the performance of MSD-CTR, we conduct extensive experiments on four real-world datasets and implement our model based on two foundational CTR methods. The results demonstrate that MSD-CTR outperforms existing CTR models. Additionally, we perform ablation studies and qualitative analyses to validate the effectiveness of the proposed components.
+\section{Contributions and Evaluation}
+
+To evaluate the performance of MSD-CTR, we conduct extensive experiments on four real-world datasets and implement our model based on two foundational CTR methods~\cite{guo2017deepfm, wang2021dcn}. The results demonstrate that MSD-CTR outperforms existing CTR models~\cite{zhou2019deep, feng2019deep}. Additionally, we perform ablation studies and qualitative analyses to validate the effectiveness of the proposed components.
+
+Our approach addresses the limitations of current text-enhanced CTR prediction methods by providing a principled way to disentangle semantic representations while maintaining their relevance to click prediction tasks. The integration of topic modeling with disentangled representation learning offers a novel perspective on handling multi-faceted textual information in recommendation scenarios.
 
 \textbf{Our contributions can be summarized as follows:}
 \begin{enumerate}
-    \item We investigate text-enhanced CTR methods and analyze the issue of entangled semantic embeddings.
-    \item We propose MSD-CTR, a novel framework that disentangles and incorporates multi-faceted knowledge from textual information via DSTopic and TopicDRL modules.
-    \item We conduct extensive experiments demonstrating the superior performance of MSD-CTR and validate the contributions of its individual components.
+    \item We investigate text-enhanced CTR methods and analyze the issue of entangled semantic embeddings, providing both theoretical analysis and empirical evidence of the limitations in current approaches.
+    \item We propose MSD-CTR, a novel framework that disentangles and incorporates multi-faceted knowledge from textual information via DSTopic and TopicDRL modules, bridging the gap between neural topic modeling and CTR prediction.
+    \item We develop innovative loss functions including individual-level alignment loss and intra-view contrastive loss that effectively guide the learning of disentangled semantic representations for CTR tasks.
+    \item We conduct extensive experiments demonstrating the superior performance of MSD-CTR across multiple datasets and baseline methods, along with comprehensive ablation studies that validate the contributions of individual components.
+    \item We provide detailed qualitative analysis showing how our disentangled representations capture distinct semantic aspects, offering interpretability benefits alongside performance improvements.
 \end{enumerate}
 
+\section{Thesis Organization}
 
+The remainder of this thesis is organized as follows: Chapter 2 reviews related work in CTR prediction, disentangled representation learning, and neural topic modeling. Chapter 3 presents the detailed methodology of our MSD-CTR framework. Chapter 4 describes our experimental setup and presents comprehensive results. Chapter 5 provides ablation studies and qualitative analysis. Finally, Chapter 6 concludes the thesis and discusses future research directions.

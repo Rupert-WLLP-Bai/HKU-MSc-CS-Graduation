@@ -50,6 +50,32 @@ More recently, topic modeling has been extended to PLM-based semantic embeddings
 
 In our work, we propose a disentangled topic model that leverages both BoW structure and semantic embeddings to guide CTR learning.
 
+\section{Comprehensive Related Work Analysis}
+
+\subsection{Evolution of CTR Prediction Models}
+\textbf{Early Approaches (2010-2015):} Traditional machine learning methods like logistic regression and gradient boosting dominated.
+
+\textbf{Deep Learning Era (2016-2020):} Introduction of neural networks brought significant improvements~\cite{guo2017deepfm}.
+
+\textbf{Attention Mechanisms (2018-2021):} Models like DIN~\cite{zhou2018deep} and DIEN~\cite{zhou2019deep} introduced attention for user interest modeling.
+
+\textbf{Pre-trained Models (2021-Present):} Integration of large language models represents the current frontier~\cite{wang2023bert4ctr}.
+
+\subsection{Topic Modeling Landscape}
+\textbf{Classical Methods:} LDA~\cite{blei2003latent}, CTM~\cite{blei2006dynamic}, and HDP provided foundational approaches.
+
+\textbf{Neural Topic Models:} VAE-based approaches like NVDM and ETM~\cite{dieng2020topic} enabled end-to-end learning.
+
+\textbf{Pre-trained Topic Models:} Recent work like BERTopic~\cite{grootendorst2022bertopic} leverages transformer embeddings.
+
+\subsection{Disentanglement in Recommendation}
+Detailed comparison of disentanglement approaches:
+\begin{itemize}
+    \item \textbf{Factor-based Methods}~\cite{ma2019learning}: Separate collaborative signals into independent factors
+    \item \textbf{Multi-task Learning}: Use auxiliary tasks to encourage disentanglement
+    \item \textbf{Causal Approaches}~\cite{yang2021causalvae}: Model causal relationships between latent factors
+\end{itemize}
+
 \section{Qualitative Study}
 
 \subsection{Visualization of Learned Embeddings}
