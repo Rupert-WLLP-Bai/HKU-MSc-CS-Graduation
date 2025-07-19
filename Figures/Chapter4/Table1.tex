@@ -1,19 +1,22 @@
 \begin{table}[ht]
 \centering
-\resizebox{\textwidth}{!}{  % Resize the table to fit the page width
-\begin{tabular}{l|l|l|l|l|l|l|l|l}
+\resizebox{\textwidth}{!}{
+\begin{tabular}{l|cc|cc|cc|cc}
 \toprule
-\textbf{Model} & \textbf{Arts AUC$\uparrow$} & \textbf{Arts LogLoss$\downarrow$} & \textbf{Grocery AUC$\uparrow$} & \textbf{Grocery LogLoss$\downarrow$} & \textbf{Office AUC$\uparrow$} & \textbf{Office LogLoss$\downarrow$} & \textbf{Garden AUC$\uparrow$} & \textbf{Garden LogLoss$\downarrow$} \\\midrule 
+\textbf{Model} & \multicolumn{2}{c|}{\textbf{Arts}} & \multicolumn{2}{c|}{\textbf{Grocery}} & \multicolumn{2}{c|}{\textbf{Office}} & \multicolumn{2}{c}{\textbf{Garden}} \\
+\hline
+ & \textbf{AUC}$\uparrow$ & \textbf{LogLoss}$\downarrow$ & \textbf{AUC}$\uparrow$ & \textbf{LogLoss}$\downarrow$ & \textbf{AUC}$\uparrow$ & \textbf{LogLoss}$\downarrow$ & \textbf{AUC}$\uparrow$ & \textbf{LogLoss}$\downarrow$ \\
+\midrule 
 DCNv2 & 0.759727 & 0.405681 & 0.748675 & 0.398848 & 0.755155 & 0.445493 & 0.754589 & 0.463342 \\
-Concat & 0.763376 & 0.404141 & 0.74724 & 0.40057 & 0.759956 & 0.443195 & 0.758954 & 0.460755 \\
+Concat & 0.763376 & 0.404141 & 0.74724 & 0.40057 & 0.759956 & 0.443195 & \underline{0.758954} & \underline{0.460755} \\
 CTRL & 0.759416 & 0.407308 & 0.744808 & 0.401963 & 0.754862 & 0.446926 & 0.755235 & 0.464106 \\
-TIGER & 0.763445 & 0.403398 & 0.750746 & 0.398204 & 0.759498 & 0.442567 & 0.75841 & 0.460965 \\
+TIGER & \underline{0.763445} & \underline{0.403398} & \underline{0.750746} & \underline{0.398204} & 0.759498 & 0.442567 & 0.75841 & 0.460965 \\
 MOC & 0.762728 & 0.404472 & 0.749354 & 0.399078 & 0.759687 & 0.44234 & 0.757802 & 0.461934 \\
-VQRec & 0.763365 & 0.403924 & 0.749727 & 0.398552 & 0.760137 & 0.442207 & 0.758742 & 0.461188 \\
+VQRec & 0.763365 & 0.403924 & 0.749727 & 0.398552 & \underline{0.760137} & \underline{0.442207} & 0.758742 & 0.461188 \\
 MSD-CTR & \textbf{0.765518} & \textbf{0.402527} & \textbf{0.751367} & \textbf{0.396921} & \textbf{0.761241} & \textbf{0.441938} & \textbf{0.759369} & \textbf{0.459633} \\ 
 \bottomrule 
 \end{tabular}
 }
-\caption{Performance comparison of different models. The boldface denotes the highest score and the underline indicates the runner-up of all baselines.}
+\caption{Performance comparison of different models. The boldface denotes the highest score and the underline indicates the runner-up of all baselines. Each category contains both AUC and LogLoss metrics.}
 \label{tab:performance_comparison}
 \end{table}
