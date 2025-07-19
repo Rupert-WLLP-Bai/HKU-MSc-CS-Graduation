@@ -54,8 +54,9 @@ openany
 % \renewcommand\thesubfigure{(\Alph{subfigure})} % change the image numbering and reference link to (A),(B),(C), ...... format
 
 \usepackage{mathpazo} % Use the Palatino font by default
+\usepackage{bm} % Bold math symbols
 %\usepackage[backend=bibtex,style=alphabetic,natbib=true]{biblatex} % Use the bibtex backend with the authoryear citation style (which resembles APA)
-\usepackage[natbib=true,maxbibnames=99,firstinits=true]{biblatex}
+\usepackage[backend=bibtex,natbib=true,maxbibnames=99,firstinits=false,sorting=none]{biblatex}
 
 \addbibresource{thesis.bib} % The filename of the bibliography
 
@@ -66,6 +67,25 @@ openany
 \usepackage{rotating} % Required to add rotated big tables
 
 \usepackage[normalem]{ulem} % Required to add dashed underlines
+
+\usepackage[cal=cm]{mathalfa}  % "cm" = Computer Modern (比较规整)
+
+\usepackage{listings}
+\usepackage{xcolor}
+
+\lstset{
+  language=Python,
+  basicstyle=\ttfamily\small,      % 小号等宽字体
+  breaklines=true,                 % 自动换行
+  keywordstyle=\color{blue},       % 关键字高亮
+  commentstyle=\color{gray},       % 注释颜色
+  stringstyle=\color{orange},      % 字符串颜色
+  showstringspaces=false,          % 不显示字符串中的空格标记
+  numbers=left,                    % 行号显示在左侧
+  numberstyle=\tiny\color{gray},   % 行号样式
+  frame=single,                    % 给代码加个框
+  captionpos=b                     % 标题放在底部（如有）
+}
 
 \setlength\parindent{2em}
 %----------------------------------------------------------------------------------------
@@ -93,7 +113,7 @@ openany
 %	THESIS INFORMATION
 %----------------------------------------------------------------------------------------
 
-\thesistitle{Topic Guided Multi-faceted Semantic Disentanglement for CTR prediction}
+\thesistitle{Topic Guided Multi-faceted Semantic Disentanglement for Recommendation System}
 % Thesis title, this is used in the title and abstract, print it elsewhere with \ttitle
 
 \supervisor{Prof. FirstName \textsc{FamilyName}}
@@ -109,7 +129,8 @@ openany
 \degree{Master of Science}
 % Your degree name, this is used in the title page and abstract, print it elsewhere with \degreename
 
-\author{Lei \textsc{Xia}}
+\author{\textbf{\textsc{Bai} Junhao}, \textbf{\textsc{Long} Qian}, \textbf{\textsc{Yin} Zhiqian}}
+
 % The author name, this is used in the title page and abstract, print it elsewhere with \authorname
 
 \addresses{}
@@ -118,7 +139,7 @@ openany
 \subject{Natural Language Processing}
 % Your subject area, this is not currently used anywhere in the template, print it elsewhere with \subjectname
 
-\keywords{pre-trained language model, large language processing, supervised fine-tuning}
+\keywords{CTR Prediction; Disentangled Representation Learning; Topic Model}
 % Keywords for your thesis, this is not currently used anywhere in the template, print it elsewhere with \keywordnames
 
 \university{University of Hong Kong}
@@ -249,6 +270,10 @@ openany
 
 \include{Chapters/Chapter1}
 \include{Chapters/Chapter2}
+\include{Chapters/Chapter3}
+\include{Chapters/Chapter4}
+\include{Chapters/Chapter5}
+\include{Chapters/Chapter6}
 
 %----------------------------------------------------------------------------------------
 %	THESIS CONTENT - APPENDICES
@@ -260,14 +285,15 @@ openany
 % Uncomment the lines as you write the Appendices
 
 \include{Appendices/AppendixA}
-\include{Appendices/AppendixB}
-\include{Appendices/AppendixC}
+% \include{Appendices/AppendixB}
+% \include{Appendices/AppendixC}
 
 
 %----------------------------------------------------------------------------------------
 %	BIBLIOGRAPHY
 %----------------------------------------------------------------------------------------
 
+\nocite{*}
 \printbibliography[heading=bibintoc]
 
 %----------------------------------------------------------------------------------------

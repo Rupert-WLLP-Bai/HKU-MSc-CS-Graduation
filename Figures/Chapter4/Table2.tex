@@ -1,0 +1,16 @@
+\begin{table}[ht]
+\centering
+\resizebox{\textwidth}{!}{
+\begin{tabular}{l|ll|ll}
+\toprule
+\textbf{Variants} & \textbf{DCNv2 AUC$\uparrow$} & \textbf{DCNv2 LogLoss$\downarrow$} & \textbf{DeepFM AUC$\uparrow$} & \textbf{DeepFM LogLoss$\downarrow$} \\ \midrule
+MSD-CTR & 0.759369 & 0.459633 & 0.75736 & 0.461959 \\ 
+Topic Emb. & 0.759129 & 0.461352 & 0.753654 & 0.466281 \\ 
+Topic Prob. & 0.757253 & 0.464738 & 0.756237 & 0.463137 \\ 
+w/o ind & 0.758907 & 0.4605 & 0.757183 & 0.462279 \\ 
+w/o int & 0.758879 & 0.461624 & 0.756379 & 0.463946 \\ \bottomrule
+\end{tabular}
+}
+\caption{Ablation Study for TopicDRL on Garden.}
+\label{tab:ablation_study}
+\end{table}
